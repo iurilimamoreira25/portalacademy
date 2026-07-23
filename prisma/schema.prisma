@@ -1,0 +1,109 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+model User {
+  id           String   @id @default(cuid())
+  email        String   @unique
+  name         String
+  role         Role     @default(SELLER)
+  passwordHash String
+  xp           Int      @default(0)
+  level        Int      @default(1)
+  coins        Int      @default(0)
+  streak       Int      @default(0)
+  lastLoginAt  DateTime?
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+
+  sessions     Session[]
+  stats        UserStats?
+  achievements UserAchievement[]
+}
+
+enum Role {
+  ADMIN
+  SUPERVISOR
+  SELLER
+}
+
+model Session {
+  id        String   @id @default(cuid())
+  userId    String
+  user      User     @relation(fields: [userId], references: [id])
+  token     String   @unique
+  expiresAt DateTime
+  createdAt DateTime @default(now())
+}
+
+model TrainingSession {
+  id              String    @id @default(cuid())
+  userId          String
+  customerProfile Json
+  scenario        String
+  messages        Json      @default("[]")
+  evaluation      Json?
+  feedback        Json?
+  xpEarned        Int       @default(0)
+  coinsEarned     Int       @default(0)
+  duration        Int       @default(0)
+  completed       Boolean   @default(false)
+  createdAt       DateTime  @default(now())
+  completedAt     DateTime?
+}
+
+model UserStats {
+  id                String   @id @default(cuid())
+  userId            String   @unique
+  user              User     @relation(fields: [userId], references: [id])
+  totalSessions     Int      @default(0)
+  completedSessions Int      @default(0)
+  totalXP           Int      @default(0)
+  avgScore          Float    @default(0)
+  avgEmpathy        Float    @default(0)
+  avgCommunication  Float    @default(0)
+  avgNegotiation    Float    @default(0)
+  avgClosure        Float    @default(0)
+  conversions       Int      @default(0)
+  objectionswon     Int      @default(0)
+  trainigMinutes    Int      @default(0)
+  updatedAt         DateTime @updatedAt
+}
+
+model Achievement {
+  id          String            @id @default(cuid())
+  name        String
+  description String
+  icon        String
+  xpReward    Int               @default(0)
+  coinReward  Int               @default(0)
+  condition   Json
+  users       UserAchievement[]
+}
+
+model UserAchievement {
+  id            String      @id @default(cuid())
+  userId        String
+  user          User        @relation(fields: [userId], references: [id])
+  achievementId String
+  achievement   Achievement @relation(fields: [achievementId], references: [id])
+  earnedAt      DateTime    @default(now())
+
+  @@unique([userId, achievementId])
+}
+
+model Product {
+  id          String   @id @default(cuid())
+  name        String
+  category    String
+  description String
+  features    Json
+  priceRange  String
+  active      Boolean  @default(true)
+  createdAt   DateTime @default(now())
+}
