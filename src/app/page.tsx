@@ -16,6 +16,7 @@ import {
   TrendingUp,
   Play,
   Check,
+  X,
 } from 'lucide-react'
 
 const ease = [0.16, 1, 0.3, 1] as const
@@ -33,6 +34,7 @@ export default function Home() {
   const heroRef = useRef<HTMLDivElement>(null)
   const [mounted, setMounted] = useState(false)
   useEffect(() => setMounted(true), [])
+  const [showBanner, setShowBanner] = useState(true)
   const mx = useMotionValue(0)
   const my = useMotionValue(0)
   const sx = useSpring(mx, { stiffness: 60, damping: 18 })
@@ -74,6 +76,30 @@ export default function Home() {
         </motion.div>
         <div className="absolute inset-x-0 top-[46rem] h-72 bg-gradient-to-b from-transparent to-[#f4f7fe]" />
       </div>
+
+      {/* ============ Announcement bar ============ */}
+      {showBanner && (
+        <motion.div
+          initial={{ opacity: 0, y: -12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease }}
+          className="w-full bg-gradient-to-r from-brand to-brand-3"
+        >
+          <div className="relative mx-auto flex max-w-6xl items-center justify-center px-10 py-2.5">
+            <p className="text-center text-[13px] font-medium text-white sm:text-sm">
+              🚀 Em breve: conteúdo exclusivo de treinamento pra sua equipe fechar mais
+              vendas<span className="hidden sm:inline"> com cada cliente</span>.
+            </p>
+            <button
+              onClick={() => setShowBanner(false)}
+              aria-label="Fechar aviso"
+              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-md p-1 text-white/70 transition-colors hover:bg-white/15 hover:text-white"
+            >
+              <X className="h-4 w-4" strokeWidth={2} />
+            </button>
+          </div>
+        </motion.div>
+      )}
 
       {/* ============ Nav ============ */}
       <motion.header
