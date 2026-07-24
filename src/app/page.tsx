@@ -87,7 +87,7 @@ export default function Home() {
             <span className="grid h-8 w-8 place-items-center rounded-xl bg-gradient-to-br from-brand to-brand-3 text-white shadow-glow">
               <Sparkles className="h-4 w-4" strokeWidth={2} />
             </span>
-            <span className="text-[15px] font-semibold tracking-tight">Portal Temper</span>
+            <span className="text-[15px] font-semibold tracking-tight">Portal Academy</span>
           </Link>
           <nav className="hidden items-center gap-8 text-[14px] font-medium text-muted-foreground md:flex">
             <a href="#produto" className="transition-colors hover:text-foreground">Produto</a>
@@ -341,9 +341,9 @@ export default function Home() {
             <span className="grid h-6 w-6 place-items-center rounded-lg bg-gradient-to-br from-brand to-brand-3 text-white">
               <Sparkles className="h-3 w-3" strokeWidth={2} />
             </span>
-            <span className="font-medium text-foreground">Portal Temper Academy</span>
+            <span className="font-medium text-foreground">Portal Academy</span>
           </div>
-          <p>© {new Date().getFullYear()} Portal Temper. Treinamento comercial com IA.</p>
+          <p>© {new Date().getFullYear()} Portal Academy. Treinamento comercial com IA.</p>
         </div>
       </footer>
     </div>

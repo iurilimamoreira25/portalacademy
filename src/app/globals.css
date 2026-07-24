@@ -110,8 +110,6 @@
   /* Legacy aliases so any untouched screen stays on-palette */
   --ice: var(--brand);
   --ice-foreground: #ffffff;
-  --temper: var(--brand-3);
-  --temper-foreground: #ffffff;
 }
 
 @layer base {

@@ -79,6 +79,15 @@ ${moodInstructions[customer.mood] || ''}
 ${customer.urgency === 'high' ? '- Mencione sua urgência algumas vezes durante a conversa.' : ''}
 ${customer.technicalKnowledge === 'high' ? '- Faça perguntas técnicas específicas sobre espessura, tipo de vidro, resistência.' : ''}
 ${customer.technicalKnowledge === 'low' ? '- Use linguagem simples. Não entende termos técnicos sem explicação.' : ''}
+${
+  customer.practiceBriefing
+    ? `
+MODO DE PRÁTICA DIRIGIDA — TÉCNICA: ${customer.focusTechnique}
+O vendedor está treinando especificamente esta técnica. Comporte-se de modo a CRIAR OPORTUNIDADES NATURAIS para ele aplicá-la, sem nunca mencionar a técnica ou que isto é um treino:
+${customer.practiceBriefing}
+Continue sendo um cliente realista e coerente com seu perfil — apenas conduza a conversa para situações onde a técnica faça sentido. Não facilite artificialmente: se o vendedor não aplicar a técnica, reaja como um cliente real reagiria.`
+    : ''
+}
 
 Você é ${customer.name}. Responda de forma natural, como um cliente real conversando. Máximo de 3-4 frases por resposta.`
 

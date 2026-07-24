@@ -8,7 +8,29 @@ export async function POST(req: NextRequest) {
     const user = await getUser()
     if (!user) return NextResponse.json({ error: 'Não autenticado' }, { status: 401 })
 
+    let moduleSlug: string | undefined
+    try {
+      const body = await req.json()
+      moduleSlug = body?.moduleSlug
+    } catch {
+      // no body — free practice
+    }
+
+    let focusModule: { id: string; slug: string; title: string; practiceBriefing: string } | null =
+      null
+    if (moduleSlug) {
+      const m = await prisma.module.findUnique({
+        where: { slug: moduleSlug },
+        select: { id: true, slug: true, title: true, practiceBriefing: true },
+      })
+      if (m) focusModule = m
+    }
+
     const customer = generateCustomer()
+    if (focusModule) {
+      customer.focusTechnique = focusModule.title
+      customer.practiceBriefing = focusModule.practiceBriefing
+    }
 
     const session = await prisma.trainingSession.create({
       data: {
@@ -16,16 +38,32 @@ export async function POST(req: NextRequest) {
         customerProfile: JSON.parse(JSON.stringify(customer)),
         scenario: customer.scenario,
         messages: [],
+        moduleId: focusModule?.id ?? null,
       },
     })
 
-    return NextResponse.json({ session, customer })
+    if (focusModule) {
+      await prisma.userModuleProgress
+        .upsert({
+          where: { userId_moduleId: { userId: user.id, moduleId: focusModule.id } },
+          create: { userId: user.id, moduleId: focusModule.id, practiceSessions: 1 },
+          update: { practiceSessions: { increment: 1 } },
+        })
+        .catch(() => {})
+    }
+
+    return NextResponse.json({
+      session,
+      customer,
+      focusModule: focusModule ? { slug: focusModule.slug, title: focusModule.title } : null,
+    })
   } catch (error) {
     console.error('Session error:', error)
     const customer = generateCustomer()
     return NextResponse.json({
       session: { id: 'offline-' + Date.now() },
       customer,
+      focusModule: null,
     })
   }
 }

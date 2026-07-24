@@ -6,7 +6,12 @@ import { Message, EvaluationScore, FeedbackItem } from '@/types'
 
 type Phase = 'idle' | 'chat' | 'evaluating' | 'feedback'
 
-export function useTraining() {
+interface FocusModule {
+  slug: string
+  title: string
+}
+
+export function useTraining(moduleSlug?: string) {
   const [sessionId, setSessionId] = useState<string | null>(null)
   const [customer, setCustomer] = useState<CustomerProfile | null>(null)
   const [messages, setMessages] = useState<Message[]>([])
@@ -19,6 +24,7 @@ export function useTraining() {
   const [coinsEarned, setCoinsEarned] = useState(0)
   const [converted, setConverted] = useState(false)
   const [summary, setSummary] = useState('')
+  const [focusModule, setFocusModule] = useState<FocusModule | null>(null)
 
   const startSession = useCallback(async () => {
     setIsLoading(true)
@@ -29,17 +35,22 @@ export function useTraining() {
     setConverted(false)
 
     try {
-      const res = await fetch('/api/training/session', { method: 'POST' })
+      const res = await fetch('/api/training/session', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify(moduleSlug ? { moduleSlug } : {}),
+      })
       const data = await res.json()
       setSessionId(data.session.id)
       setCustomer(data.customer)
+      setFocusModule(data.focusModule ?? null)
       setPhase('chat')
     } catch (error) {
       console.error('Failed to start session:', error)
     } finally {
       setIsLoading(false)
     }
-  }, [])
+  }, [moduleSlug])
 
   const sendMessage = useCallback(
     async (content: string) => {

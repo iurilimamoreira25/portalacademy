@@ -12,9 +12,9 @@ const inter = Inter({
 const geistMono = Geist_Mono({ subsets: ['latin'], variable: '--font-geist-mono' })
 
 export const metadata: Metadata = {
-  title: 'Portal Temper Academy — Treinamento comercial com IA',
+  title: 'Portal Academy — Treinamento comercial com IA',
   description:
-    'Plataforma de treinamento comercial com IA para vendedores da Portal Temper. Treine conversas reais, receba avaliação instantânea e evolua.',
+    'Plataforma de treinamento comercial com IA para vendedores da Portal Academy. Treine conversas reais, receba avaliação instantânea e evolua.',
 }
 
 export default function RootLayout({ children }: { children: React.ReactNode }) {

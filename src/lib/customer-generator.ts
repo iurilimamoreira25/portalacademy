@@ -15,6 +15,8 @@ export interface CustomerProfile {
   scenario: string
   productInterest: string
   buyProbability: number
+  focusTechnique?: string
+  practiceBriefing?: string
 }
 
 const names = [

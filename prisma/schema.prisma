@@ -3,8 +3,9 @@ generator client {
 }
 
 datasource db {
-  provider = "postgresql"
-  url      = env("DATABASE_URL")
+  provider  = "postgresql"
+  url       = env("DATABASE_URL")
+  directUrl = env("DIRECT_URL")
 }
 
 model User {
@@ -21,9 +22,10 @@ model User {
   createdAt    DateTime @default(now())
   updatedAt    DateTime @updatedAt
 
-  sessions     Session[]
-  stats        UserStats?
-  achievements UserAchievement[]
+  sessions       Session[]
+  stats          UserStats?
+  achievements   UserAchievement[]
+  moduleProgress UserModuleProgress[]
 }
 
 enum Role {
@@ -55,6 +57,9 @@ model TrainingSession {
   completed       Boolean   @default(false)
   createdAt       DateTime  @default(now())
   completedAt     DateTime?
+
+  moduleId        String?
+  module          Module?   @relation(fields: [moduleId], references: [id])
 }
 
 model UserStats {
@@ -106,4 +111,58 @@ model Product {
   priceRange  String
   active      Boolean  @default(true)
   createdAt   DateTime @default(now())
+}
+
+model Module {
+  id               String   @id @default(cuid())
+  slug             String   @unique
+  order            Int
+  title            String
+  summary          String
+  category         String
+  estimatedMinutes Int      @default(6)
+
+  objective        String
+  explanation      String
+  whenToUse        String
+  whenToAvoid      String
+  practicalExample String
+  commonMistakes   Json
+  tips             Json
+
+  /// Instruções injetadas no cliente simulado ao praticar esta técnica
+  practiceBriefing String
+
+  createdAt DateTime @default(now())
+
+  quizQuestions    QuizQuestion[]
+  progress         UserModuleProgress[]
+  trainingSessions TrainingSession[]
+}
+
+model QuizQuestion {
+  id           String  @id @default(cuid())
+  moduleId     String
+  module       Module  @relation(fields: [moduleId], references: [id])
+  order        Int     @default(0)
+  question     String
+  options      Json
+  correctIndex Int
+  explanation  String?
+}
+
+model UserModuleProgress {
+  id               String    @id @default(cuid())
+  userId           String
+  user             User      @relation(fields: [userId], references: [id])
+  moduleId         String
+  module           Module    @relation(fields: [moduleId], references: [id])
+  startedAt        DateTime  @default(now())
+  completedAt      DateTime?
+  quizScore        Int?
+  quizPassed       Boolean   @default(false)
+  practiceSessions Int       @default(0)
+  updatedAt        DateTime  @updatedAt
+
+  @@unique([userId, moduleId])
 }

@@ -46,7 +46,7 @@ export function Sidebar() {
           </span>
           <span className="flex flex-col leading-none">
             <span className="text-[14px] font-semibold tracking-tight text-foreground">
-              Portal Temper
+              Portal Academy
             </span>
             <span className="eyebrow mt-1 text-[9px]">Academy</span>
           </span>
