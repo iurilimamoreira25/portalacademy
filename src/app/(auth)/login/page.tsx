@@ -53,7 +53,7 @@ export default function LoginPage() {
 
   return (
     <div className="min-h-screen bg-background lg:grid lg:grid-cols-[1.15fr_1fr]">
-      <AuthHero eyebrow="Portal Temper · Academy" features={FEATURES}>
+      <AuthHero eyebrow="Portal · Academy" features={FEATURES}>
         <>
           Treine sob pressão.
           <br />
@@ -73,7 +73,7 @@ export default function LoginPage() {
               <Sparkles className="h-4 w-4" strokeWidth={2} />
             </span>
             <div>
-              <p className="text-sm font-semibold leading-tight">Portal Temper</p>
+              <p className="text-sm font-semibold leading-tight">Portal Academy</p>
               <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Academy</p>
             </div>
           </div>
