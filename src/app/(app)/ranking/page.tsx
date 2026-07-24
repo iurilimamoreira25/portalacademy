@@ -1,8 +1,9 @@
 'use client'
 
 import { useEffect, useState } from 'react'
+import { useAuth } from '@/contexts/AuthContext'
 import { motion } from 'framer-motion'
-import { Trophy, Star, TrendingUp, Users, Crown } from 'lucide-react'
+import { cn } from '@/lib/utils'
 
 interface RankUser {
   id: string
@@ -12,7 +13,10 @@ interface RankUser {
   stats: { avgScore?: number; conversions?: number } | null
 }
 
+const ease = [0.16, 1, 0.3, 1] as const
+
 export default function RankingPage() {
+  const { user } = useAuth()
   const [ranking, setRanking] = useState<RankUser[]>([])
   const [loading, setLoading] = useState(true)
 
@@ -24,115 +28,84 @@ export default function RankingPage() {
       .finally(() => setLoading(false))
   }, [])
 
-  const podium = ranking.slice(0, 3)
-  const rest = ranking.slice(3)
-
-  const podiumOrder = [1, 0, 2]
-  const podiumSizes = ['h-24', 'h-32', 'h-20']
-  const crownColors = ['text-gray-300', 'text-yellow-400', 'text-amber-600']
-  const borderColors = ['border-gray-500/20', 'border-yellow-500/30', 'border-amber-600/20']
-
   return (
-    <div className="p-8 max-w-4xl mx-auto">
+    <div className="mx-auto max-w-5xl px-8 py-12 lg:px-12">
+      <motion.header initial={{ opacity: 0, y: 16 }} animate={{ opacity: 1, y: 0 }} transition={{ duration: 0.6, ease }}>
+        <p className="eyebrow text-brand">Classificação geral</p>
+        <h1 className="mt-3 text-[2rem] font-bold tracking-[-0.02em] text-foreground">Ranking</h1>
+        <p className="mt-2 text-[15px] text-muted-foreground">
+          Os vendedores da Academy, ordenados por experiência acumulada.
+        </p>
+      </motion.header>
+
       <motion.div
-        initial={{ opacity: 0, y: -20 }}
+        initial={{ opacity: 0, y: 16 }}
         animate={{ opacity: 1, y: 0 }}
-        className="mb-8"
+        transition={{ duration: 0.6, ease, delay: 0.08 }}
+        className="mt-8 overflow-hidden rounded-2xl border border-border bg-white shadow-soft"
       >
-        <h1 className="text-3xl font-bold text-white mb-1 flex items-center gap-3">
-          <Trophy className="w-7 h-7 text-yellow-400" />
-          Ranking Global
-        </h1>
-        <p className="text-white/30 text-sm">Os melhores vendedores da Portal Temper Academy</p>
-      </motion.div>
-
-      {loading ? (
-        <div className="flex items-center justify-center h-64">
-          <div className="w-8 h-8 border-2 border-blue-500/30 border-t-blue-500 rounded-full animate-spin" />
+        {/* Header row */}
+        <div className="grid grid-cols-[2.5rem_1fr_auto] items-center gap-4 border-b border-border px-5 py-3 sm:grid-cols-[2.5rem_1fr_5rem_7rem_4rem]">
+          <span className="eyebrow text-[10px]">#</span>
+          <span className="eyebrow text-[10px]">Vendedor</span>
+          <span className="eyebrow hidden text-right text-[10px] sm:block">Nível</span>
+          <span className="eyebrow text-right text-[10px]">XP</span>
+          <span className="eyebrow hidden text-right text-[10px] sm:block">Nota</span>
         </div>
-      ) : ranking.length === 0 ? (
-        <div className="text-center py-24 text-white/20">
-          <Users className="w-14 h-14 mx-auto mb-4 opacity-30" />
-          <p className="font-medium">Nenhum dado ainda</p>
-          <p className="text-sm mt-1 text-white/15">Complete treinamentos para aparecer aqui</p>
-        </div>
-      ) : (
-        <>
-          {podium.length > 0 && (
-            <div className="flex items-end justify-center gap-4 mb-10">
-              {podiumOrder.map((idx) => {
-                const rankUser = podium[idx]
-                if (!rankUser) return <div key={idx} className="w-36" />
-                const position = idx + 1
-                return (
-                  <motion.div
-                    key={rankUser.id}
-                    initial={{ opacity: 0, y: 30 }}
-                    animate={{ opacity: 1, y: 0 }}
-                    transition={{ delay: idx * 0.1 }}
-                    className="flex flex-col items-center gap-3 w-36"
-                  >
-                    <Crown className={`w-6 h-6 ${crownColors[idx]}`} />
-                    <div className="w-14 h-14 rounded-full bg-gradient-to-br from-blue-400 to-violet-500 flex items-center justify-center text-white text-xl font-bold shadow-lg">
-                      {rankUser.name.charAt(0)}
-                    </div>
-                    <div className="text-center">
-                      <p className="text-white font-semibold text-sm">{rankUser.name}</p>
-                      <p className="text-white/30 text-xs">Nível {rankUser.level}</p>
-                      <div className="flex items-center justify-center gap-1 mt-1 text-yellow-400/80">
-                        <Star className="w-3 h-3" />
-                        <span className="text-xs font-medium">{rankUser.xp.toLocaleString('pt-BR')}</span>
-                      </div>
-                    </div>
-                    <div
-                      className={`w-full ${podiumSizes[idx]} bg-white/[0.04] border ${borderColors[idx]} rounded-t-xl flex items-start justify-center pt-3`}
-                    >
-                      <span className={`text-2xl font-black ${crownColors[idx]}`}>#{position}</span>
-                    </div>
-                  </motion.div>
-                )
-              })}
-            </div>
-          )}
 
-          {rest.length > 0 && (
-            <div className="space-y-2">
-              {rest.map((rankUser, i) => (
-                <motion.div
-                  key={rankUser.id}
-                  initial={{ opacity: 0, x: -20 }}
-                  animate={{ opacity: 1, x: 0 }}
-                  transition={{ delay: i * 0.04 }}
-                  className="bg-white/[0.03] border border-white/[0.06] rounded-xl px-5 py-3.5 flex items-center gap-4 hover:bg-white/[0.05] transition-colors"
+        {loading ? (
+          <div className="flex h-48 items-center justify-center">
+            <div className="h-5 w-5 animate-spin rounded-full border-[1.5px] border-brand/25 border-t-brand" />
+          </div>
+        ) : ranking.length === 0 ? (
+          <p className="py-20 text-center text-[14px] text-muted-foreground">
+            Nenhum vendedor classificado ainda. Complete um treino para entrar no ranking.
+          </p>
+        ) : (
+          <ul>
+            {ranking.map((r, i) => {
+              const isYou = r.id === user?.id
+              const position = i + 1
+              return (
+                <motion.li
+                  key={r.id}
+                  initial={{ opacity: 0, y: 8 }}
+                  animate={{ opacity: 1, y: 0 }}
+                  transition={{ duration: 0.4, ease, delay: Math.min(i * 0.03, 0.3) }}
+                  className={cn(
+                    'relative grid grid-cols-[2.5rem_1fr_auto] items-center gap-4 border-b border-border px-5 py-3.5 last:border-b-0 sm:grid-cols-[2.5rem_1fr_5rem_7rem_4rem]',
+                    isYou && 'bg-brand-soft'
+                  )}
                 >
-                  <span className="text-white/20 font-bold text-sm w-7 text-right">
-                    #{i + 4}
+                  {isYou && <span className="absolute left-0 top-0 h-full w-1 bg-brand" />}
+                  <span className={cn('tnum text-[14px] font-semibold', position === 1 ? 'text-brand' : 'text-muted-foreground')}>
+                    {position}
                   </span>
-                  <div className="w-9 h-9 rounded-full bg-gradient-to-br from-blue-400/50 to-violet-500/50 flex items-center justify-center text-white text-sm font-bold">
-                    {rankUser.name.charAt(0)}
-                  </div>
-                  <div className="flex-1 min-w-0">
-                    <p className="text-white/80 text-sm font-medium truncate">{rankUser.name}</p>
-                    <p className="text-white/25 text-xs">Nível {rankUser.level}</p>
-                  </div>
-                  <div className="flex items-center gap-4 text-right">
-                    <div>
-                      <div className="flex items-center gap-1 text-yellow-400/60 justify-end">
-                        <Star className="w-3 h-3" />
-                        <span className="text-sm font-medium">{rankUser.xp.toLocaleString('pt-BR')}</span>
-                      </div>
-                    </div>
-                    <div className="flex items-center gap-1 text-white/20">
-                      <TrendingUp className="w-3 h-3" />
-                      <span className="text-xs">{(rankUser.stats?.avgScore || 0).toFixed(0)}</span>
+                  <div className="flex min-w-0 items-center gap-3">
+                    <span className="grid h-9 w-9 shrink-0 place-items-center rounded-full bg-gradient-to-br from-brand-2 to-brand-3 text-[13px] font-semibold text-white">
+                      {r.name.charAt(0).toUpperCase()}
+                    </span>
+                    <div className="min-w-0">
+                      <p className="flex items-center gap-2 truncate text-[14px] font-semibold text-foreground">
+                        {r.name}
+                        {isYou && (
+                          <span className="rounded-full bg-brand px-1.5 py-0.5 text-[9px] font-semibold uppercase tracking-wide text-white">
+                            você
+                          </span>
+                        )}
+                      </p>
+                      <p className="text-[12px] text-muted-foreground sm:hidden">Nível {r.level}</p>
                     </div>
                   </div>
-                </motion.div>
-              ))}
-            </div>
-          )}
-        </>
-      )}
+                  <span className="tnum hidden text-right text-[14px] text-muted-foreground sm:block">{r.level}</span>
+                  <span className="tnum text-right text-[14px] font-semibold text-foreground">{r.xp.toLocaleString('pt-BR')}</span>
+                  <span className="tnum hidden text-right text-[14px] text-muted-foreground sm:block">{(r.stats?.avgScore || 0).toFixed(0)}</span>
+                </motion.li>
+              )
+            })}
+          </ul>
+        )}
+      </motion.div>
     </div>
   )
 }

@@ -6,9 +6,28 @@ import { useAuth } from '@/contexts/AuthContext'
 import { motion } from 'framer-motion'
 import { Button } from '@/components/ui/button'
 import { Input } from '@/components/ui/input'
-import { Zap, Mail, Lock, User } from 'lucide-react'
+import { Mail, Lock, User, Sparkles, Target, LineChart } from 'lucide-react'
 import Link from 'next/link'
 import { toast } from 'sonner'
+import { AuthHero } from '@/components/auth/AuthHero'
+
+const FEATURES = [
+  {
+    icon: Sparkles,
+    title: 'Sem dois treinos iguais',
+    description: 'A cada sessão, um cliente novo — personalidade, humor e objeções diferentes.',
+  },
+  {
+    icon: Target,
+    title: 'Prática com propósito',
+    description: 'Metas claras a cada rodada, com feedback direto sobre o que ajustar.',
+  },
+  {
+    icon: LineChart,
+    title: 'Curva de evolução real',
+    description: 'Cada repetição soma XP e nível — o progresso fica registrado, não só sentido.',
+  },
+]
 
 export default function RegisterPage() {
   const [name, setName] = useState('')
@@ -27,7 +46,7 @@ export default function RegisterPage() {
     setLoading(true)
     try {
       await register(name, email, password)
-      toast.success('Conta criada! Bem-vindo à Academia!')
+      toast.success('Conta criada! Bem-vindo à Academy.')
       router.push('/dashboard')
     } catch (err: unknown) {
       const message = err instanceof Error ? err.message : 'Erro ao cadastrar'
@@ -38,79 +57,80 @@ export default function RegisterPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#080808] flex items-center justify-center p-4 relative overflow-hidden">
-      <div className="absolute inset-0 bg-gradient-to-br from-violet-950/30 via-[#080808] to-blue-950/20" />
-      <div className="absolute top-1/3 right-1/4 w-80 h-80 bg-violet-600/5 rounded-full blur-3xl" />
-      <div className="absolute bottom-1/3 left-1/4 w-80 h-80 bg-blue-600/5 rounded-full blur-3xl" />
+    <div className="min-h-screen bg-background lg:grid lg:grid-cols-[1.15fr_1fr]">
+      <AuthHero eyebrow="Portal Temper · Academy" features={FEATURES}>
+        <>
+          Comece sob pressão
+          <br />
+          <span className="text-gradient">controlada.</span>
+        </>
+      </AuthHero>
 
-      <motion.div
-        initial={{ opacity: 0, y: 20 }}
-        animate={{ opacity: 1, y: 0 }}
-        transition={{ duration: 0.5 }}
-        className="relative w-full max-w-md z-10"
-      >
-        <div className="text-center mb-8">
-          <motion.div
-            initial={{ scale: 0 }}
-            animate={{ scale: 1 }}
-            transition={{ type: 'spring', delay: 0.1 }}
-            className="inline-flex items-center gap-3 mb-6"
-          >
-            <div className="w-12 h-12 rounded-2xl bg-gradient-to-br from-blue-500 to-violet-600 flex items-center justify-center shadow-lg shadow-violet-500/25">
-              <Zap className="w-6 h-6 text-white" />
+      <div className="flex items-center justify-center px-6 py-16 lg:px-16">
+        <motion.div
+          initial={{ opacity: 0, y: 12 }}
+          animate={{ opacity: 1, y: 0 }}
+          transition={{ duration: 0.5, ease: [0.16, 1, 0.3, 1] }}
+          className="w-full max-w-sm"
+        >
+          <div className="mb-10 flex items-center gap-3 lg:hidden">
+            <span className="grid h-10 w-10 place-items-center rounded-xl bg-gradient-to-br from-brand to-brand-3 text-white shadow-glow">
+              <Sparkles className="h-4 w-4" strokeWidth={2} />
+            </span>
+            <div>
+              <p className="text-sm font-semibold leading-tight">Portal Temper</p>
+              <p className="text-[11px] uppercase tracking-[0.2em] text-muted-foreground">Academy</p>
             </div>
-            <div className="text-left">
-              <p className="text-white font-bold text-lg leading-tight">Portal Temper</p>
-              <p className="text-white/40 text-xs tracking-widest uppercase">Academy</p>
-            </div>
-          </motion.div>
-          <h1 className="text-3xl font-bold text-white mb-2">Criar sua conta</h1>
-          <p className="text-white/40">Comece a treinar hoje mesmo</p>
-        </div>
+          </div>
 
-        <div className="bg-white/[0.03] border border-white/10 rounded-2xl p-8 backdrop-blur-sm shadow-2xl">
-          <form onSubmit={handleSubmit} className="space-y-5">
-            <div className="space-y-2">
-              <label className="text-sm text-white/60 font-medium">Nome completo</label>
+          <h1 className="text-[1.9rem] font-bold tracking-[-0.02em]">Criar sua conta</h1>
+          <p className="mt-1.5 text-sm text-muted-foreground">
+            Comece a treinar hoje mesmo.
+          </p>
+
+          <form onSubmit={handleSubmit} className="mt-8 space-y-4">
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground">Nome completo</label>
               <div className="relative">
-                <User className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                <User className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
                 <Input
                   type="text"
                   placeholder="Seu nome"
                   value={name}
                   onChange={(e) => setName(e.target.value)}
                   required
-                  className="pl-10 bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 focus:border-violet-500/60 focus:ring-0 h-11"
+                  autoFocus
+                  className="h-11 border-border/80 bg-card pl-10 focus-visible:ring-ice/30 focus-visible:border-ice/50"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm text-white/60 font-medium">Email</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground">Email</label>
               <div className="relative">
-                <Mail className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                <Mail className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
                 <Input
                   type="email"
                   placeholder="seu@email.com"
                   value={email}
                   onChange={(e) => setEmail(e.target.value)}
                   required
-                  className="pl-10 bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 focus:border-violet-500/60 focus:ring-0 h-11"
+                  className="h-11 border-border/80 bg-card pl-10 focus-visible:ring-ice/30 focus-visible:border-ice/50"
                 />
               </div>
             </div>
 
-            <div className="space-y-2">
-              <label className="text-sm text-white/60 font-medium">Senha</label>
+            <div className="space-y-1.5">
+              <label className="text-xs font-medium text-muted-foreground">Senha</label>
               <div className="relative">
-                <Lock className="absolute left-3 top-1/2 -translate-y-1/2 w-4 h-4 text-white/25" />
+                <Lock className="pointer-events-none absolute left-3 top-1/2 h-4 w-4 -translate-y-1/2 text-muted-foreground/60" />
                 <Input
                   type="password"
                   placeholder="Mínimo 6 caracteres"
                   value={password}
                   onChange={(e) => setPassword(e.target.value)}
                   required
-                  className="pl-10 bg-white/[0.04] border-white/10 text-white placeholder:text-white/25 focus:border-violet-500/60 focus:ring-0 h-11"
+                  className="h-11 border-border/80 bg-card pl-10 focus-visible:ring-ice/30 focus-visible:border-ice/50"
                 />
               </div>
             </div>
@@ -118,11 +138,11 @@ export default function RegisterPage() {
             <Button
               type="submit"
               disabled={loading}
-              className="w-full bg-gradient-to-r from-violet-600 to-blue-600 hover:from-violet-500 hover:to-blue-500 text-white font-semibold h-11 shadow-lg shadow-violet-500/20 transition-all duration-200"
+              className="h-11 w-full bg-primary font-medium text-primary-foreground hover:bg-primary/90"
             >
               {loading ? (
                 <span className="flex items-center gap-2">
-                  <span className="w-4 h-4 border-2 border-white/30 border-t-white rounded-full animate-spin" />
+                  <span className="h-3.5 w-3.5 animate-spin rounded-full border-2 border-primary-foreground/30 border-t-primary-foreground" />
                   Criando conta...
                 </span>
               ) : (
@@ -131,16 +151,14 @@ export default function RegisterPage() {
             </Button>
           </form>
 
-          <div className="mt-6 pt-6 border-t border-white/5 text-center">
-            <p className="text-white/30 text-sm">
-              Já tem conta?{' '}
-              <Link href="/login" className="text-violet-400 hover:text-violet-300 font-medium transition-colors">
-                Entrar
-              </Link>
-            </p>
-          </div>
-        </div>
-      </motion.div>
+          <p className="mt-6 text-center text-sm text-muted-foreground">
+            Já tem conta?{' '}
+            <Link href="/login" className="font-medium text-foreground hover:text-ice transition-colors">
+              Entrar
+            </Link>
+          </p>
+        </motion.div>
+      </div>
     </div>
   )
 }
